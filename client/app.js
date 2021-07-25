@@ -6,6 +6,9 @@ const userNameInput = document.getElementById('username');
 const messageContentInput = document.getElementById('message-content');
 let userName;
 
+const socket = io();
+socket.on('message', ({ author, content }) => addMessage(author, content))
+
 const login = (e) => {
     e.preventDefault();
     if(userNameInput.value.length < 1) {
@@ -31,15 +34,22 @@ const addMessage = (author, content) => {
     messagesList.appendChild(message);
 }
 
-const sendMessage = (e) => {
+function sendMessage(e) {
     e.preventDefault();
-    if(messageContentInput.value.length < 1) {
-        alert('You have to type a message!')
-    } else {
-        addMessage(userName, messageContentInput.value);
-        messageContentInput.value = '';
+  
+    let messageContent = messageContentInput.value;
+  
+    if(!messageContent.length) {
+      alert('You have to type something!');
     }
-}
+    else {
+      addMessage(userName, messageContent);
+      socket.emit('message', { author: userName, content: messageContent })
+      messageContentInput.value = '';
+    }
+  
+  }
 
 loginForm.addEventListener('submit', login);
 addMessageForm.addEventListener('submit', sendMessage);
+
