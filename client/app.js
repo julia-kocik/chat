@@ -14,7 +14,7 @@ const login = (e) => {
     if(userNameInput.value.length < 1) {
         alert('error')
     } else {
-        userName = userNameInput;
+        userName = userNameInput.value;
         loginForm.classList.remove('show');
         messagesSection.classList.add('show');
     }
