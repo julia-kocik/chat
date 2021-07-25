@@ -3,6 +3,7 @@ const path = require('path');
 const socket = require('socket.io');
 
 const messages = [];
+const users = [];
 
 const app = express();
 
@@ -26,8 +27,22 @@ io.on('connection', (socket) => {
      messages.push(message);
      socket.broadcast.emit('message', message);
   });
+  socket.on('join', (userName, id) => {
+    users.push(userName, id);
+    console.log('New user has joined conversation')
+    console.log(users);
+    socket.broadcast.emit('join', userName);
+  })
   socket.on('disconnect', () => { 
     console.log('Oh, socket ' + socket.id + ' has left') 
+    for(let user of users) {
+      if(user.id === socket.id) {
+        const index = users.indexOf(user);
+        socket.broadcast.emit('removeUser', user);
+        users.splice(index, 1);
+        console.log(`${user.id} logged out`)
+      }
+    }
   });
   console.log('I\'ve added a listener on message and disconnect events \n');
 });

@@ -17,6 +17,7 @@ const login = (e) => {
         userName = userNameInput.value;
         loginForm.classList.remove('show');
         messagesSection.classList.add('show');
+        socket.emit('join', { author: userName, id: socket.id })
     }
 }
 
